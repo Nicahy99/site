@@ -11,7 +11,7 @@ const game = new Phaser.Game({
     // Définir la logique de la scène
     create: function() {
       // Créer un personnage en utilisant un sprite
-      const character = this.add.sprite(100, 100, "character");
+      const character = this.add.sprite(20, 20, "character");
       // Définir la gravité pour le personnage
       character.body.gravity.y = 500;
     },
