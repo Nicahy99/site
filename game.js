@@ -1,63 +1,77 @@
-// create a new Phaser game with a canvas that is the size of the screen
+// create a new Phaser game
 var game = new Phaser.Game({
-  type: Phaser.AUTO,
-  width: window.innerWidth,
-  height: window.innerHeight,
+  width: 400,
+  height: 300,
+  scene: {
+    preload: preload,
+    create: create,
+    update: update,
+  },
 });
 
-// define the main game state
-var mainState = {
-  // define some variables to keep track of the player's position and velocity
-  playerX: 100,
-  playerY: 100,
-  playerVX: 0,
-  playerVY: 0,
+// define some variables to keep track of the player's position and velocity
+var player;
+var cursors;
 
-  // define some constants for the player's size and speed
-  PLAYER_SIZE: 20,
-  PLAYER_SPEED: 2,
-  JUMP_SPEED: 10,
+// define some constants for the player's size and speed
+var PLAYER_SIZE = 20;
+var PLAYER_SPEED = 150;
+var JUMP_SPEED = 300;
 
-  // define some platforms for the player to land on
-  platforms: [
-    {x: 50, y: 150, width: 200, height: 20},
-    {x: 100, y: 100, width: 100, height: 20},
-    {x: 150, y: 50, width: 50, height: 20},
-  ],
+// define some platforms for the player to land on
+var platforms;
 
-  // define some constants for the platform colors
-  PLATFORM_FILL_COLOR: "rgb(150, 190, 255)",
-  PLATFORM_STROKE_COLOR: "rgb(50, 50, 50)",
+// define some constants for the platform colors
+var PLATFORM_FILL_COLOR = 0x96beff;
+var PLATFORM_STROKE_COLOR = 0x323232;
 
-  // define a function to create the game world
-  create: function() {
-    // create a graphics object to draw the platforms with
-    this.platformsGraphics = game.add.graphics();
+function preload() {
+  // nothing to preload in this example
+}
 
-    // create a graphics object to draw the player with
-    this.playerGraphics = game.add.graphics();
+function create() {
+  // create the player
+  player = this.add.rectangle(100, 100, PLAYER_SIZE, PLAYER_SIZE, 0xff0000);
 
-    // create the game controls
-    this.cursors = game.input.keyboard.createCursorKeys();
-  },
+  // create the platforms
+  platforms = this.add.group();
+  platforms.add(this.add.rectangle(50, 150, 200, 20, PLATFORM_FILL_COLOR, PLATFORM_STROKE_COLOR));
+  platforms.add(this.add.rectangle(100, 100, 100, 20, PLATFORM_FILL_COLOR, PLATFORM_STROKE_COLOR));
+  platforms.add(this.add.rectangle(150, 50, 50, 20, PLATFORM_FILL_COLOR, PLATFORM_STROKE_COLOR));
 
-  // define a function to draw a platform
-  drawPlatform: function(platform) {
-    this.platformsGraphics.fillStyle(this.PLATFORM_FILL_COLOR);
-    this.platformsGraphics.strokeStyle(this.PLATFORM_STROKE_COLOR);
-    this.platformsGraphics.lineWidth = 2;
+  // enable physics for the player and platforms
+  this.physics.world.enable([player, platforms]);
 
-    this.platformsGraphics.fillRect(platform.x, platform.y, platform.width, platform.height);
-    this.platformsGraphics.strokeRect(platform.x, platform.y, platform.width, platform.height);
-  },
+  // set the player's bounciness
+  player.setBounce(0.2);
 
-  // define a function to draw the player
-  drawPlayer: function() {
-    this.playerGraphics.fillStyle(Phaser.Color.RED);
-    this.playerGraphics.strokeStyle(Phaser.Color.BLACK);
-    this.playerGraphics.lineWidth = 2;
+  // set the player's gravity
+  player.body.gravity.y = 600;
 
-    this.playerGraphics.fillRect(this.playerX - this.PLAYER_SIZE / 2, this.playerY - this.PLAYER_SIZE / 2, this.PLAYER_SIZE, this.PLAYER_SIZE);
-    this.playerGraphics.strokeRect(this.playerX - this.PLAYER_SIZE / 2, this.playerY - this.PLAYER_SIZE / 2, this.PLAYER_SIZE, this.PLAYER_SIZE);
-  },
-};
+  // set the platforms to be immovable
+  platforms.getChildren().forEach(function(platform) {
+    platform.body.immovable = true;
+  });
+
+  // enable cursor keys for player movement
+  cursors = this.input.keyboard.createCursorKeys();
+}
+
+function update() {
+  // make the player and platforms collide
+  this.physics.collide(player, platforms);
+
+  // move the player left and right
+  if (cursors.left.isDown) {
+    player.setVelocityX(-PLAYER_SPEED);
+  } else if (cursors.right.isDown) {
+    player.setVelocityX(PLAYER_SPEED);
+  } else {
+    player.setVelocityX(0);
+  }
+
+  // make the player jump
+  if (cursors.up.isDown && player.body.touching.down) {
+    player.setVelocityY(-JUMP_SPEED);
+  }
+}
