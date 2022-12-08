@@ -80,7 +80,4 @@ function update (time, delta)
     {
         bullet2.x = 64;
     }
-    setInterval(function() {
-   window.location.reload();
-}, 10000); // rafraîchit la page toutes les 10 secondes
 }
