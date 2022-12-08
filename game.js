@@ -26,6 +26,7 @@ function preload ()
     this.load.image('cannon', 'assets/cannon.png');
     this.load.image('ground', 'assets/ground.png');
     this.load.image('character', 'assets/character.png');
+    this.physics.world.gravity.y = 300;
 }
 
 function create ()
@@ -59,6 +60,8 @@ function create ()
     perso = this.add.image(0, 0, 'character').setOrigin(0);
     
     perso.setScale(0.5, 0.5);
+    
+    perso.body.enable = true;
 }
 
 //  The update function is passed 2 values:
@@ -80,4 +83,6 @@ function update (time, delta)
     {
         bullet2.x = 64;
     }
+    
+    this.perso.body.velocity.y += this.physics.world.gravity.y;
 }
