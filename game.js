@@ -1,41 +1,63 @@
-// Créer une nouvelle instance de Phaser
-const game = new Phaser.Game({
-  width: 640,
-  height: 480,
-  scene: {
-    // Définir la logique de la scène
-    create: function() {
-      // Dessiner le sol et le personnage avec des formes géométriques
-      this.add.rectangle(320, 440, 640, 80, 0x999999);
-      this.add.circle(100, 100, 20, 0xffffff);
-    },
-    // Fonction appelée après le chargement des ressources de la scène
-    onCreate: function() {
-      // Récupérer le personnage
-      const character = this.add.getChildren().find(child => child.type === "Circle");
-      // Définir la gravité pour le personnage
-      character.body.gravity.y = 500;
-    },
-    // Définir la boucle de jeu principale
-    update: function() {
-      // Récupérer les entrées du clavier
-      const cursor = this.input.keyboard.createCursorKeys();
-      // Récupérer le personnage
-      const character = this.add.getChildren().find(child => child.type === "Circle");
-      // Déplacer le personnage selon les entrées du clavier
-      if (cursor.left.isDown) {
-        character.x -= 5;
-      }
-      if (cursor.right.isDown) {
-        character.x += 5;
-      }
-      // Faire sauter le personnage
-      if (cursor.up.isDown) {
-        character.body.velocity.y = -400;
-      }
-    }
-  }
+// create a new Phaser game with a canvas that is the size of the screen
+var game = new Phaser.Game({
+  type: Phaser.AUTO,
+  width: window.innerWidth,
+  height: window.innerHeight,
 });
 
+// define the main game state
+var mainState = {
+  // define some variables to keep track of the player's position and velocity
+  playerX: 100,
+  playerY: 100,
+  playerVX: 0,
+  playerVY: 0,
 
+  // define some constants for the player's size and speed
+  PLAYER_SIZE: 20,
+  PLAYER_SPEED: 2,
+  JUMP_SPEED: 10,
 
+  // define some platforms for the player to land on
+  platforms: [
+    {x: 50, y: 150, width: 200, height: 20},
+    {x: 100, y: 100, width: 100, height: 20},
+    {x: 150, y: 50, width: 50, height: 20},
+  ],
+
+  // define some constants for the platform colors
+  PLATFORM_FILL_COLOR: "rgb(150, 190, 255)",
+  PLATFORM_STROKE_COLOR: "rgb(50, 50, 50)",
+
+  // define a function to create the game world
+  create: function() {
+    // create a graphics object to draw the platforms with
+    this.platformsGraphics = game.add.graphics();
+
+    // create a graphics object to draw the player with
+    this.playerGraphics = game.add.graphics();
+
+    // create the game controls
+    this.cursors = game.input.keyboard.createCursorKeys();
+  },
+
+  // define a function to draw a platform
+  drawPlatform: function(platform) {
+    this.platformsGraphics.fillStyle(this.PLATFORM_FILL_COLOR);
+    this.platformsGraphics.strokeStyle(this.PLATFORM_STROKE_COLOR);
+    this.platformsGraphics.lineWidth = 2;
+
+    this.platformsGraphics.fillRect(platform.x, platform.y, platform.width, platform.height);
+    this.platformsGraphics.strokeRect(platform.x, platform.y, platform.width, platform.height);
+  },
+
+  // define a function to draw the player
+  drawPlayer: function() {
+    this.playerGraphics.fillStyle(Phaser.Color.RED);
+    this.playerGraphics.strokeStyle(Phaser.Color.BLACK);
+    this.playerGraphics.lineWidth = 2;
+
+    this.playerGraphics.fillRect(this.playerX - this.PLAYER_SIZE / 2, this.playerY - this.PLAYER_SIZE / 2, this.PLAYER_SIZE, this.PLAYER_SIZE);
+    this.playerGraphics.strokeRect(this.playerX - this.PLAYER_SIZE / 2, this.playerY - this.PLAYER_SIZE / 2, this.PLAYER_SIZE, this.PLAYER_SIZE);
+  },
+};
