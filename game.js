@@ -1,77 +1,76 @@
-// create a new Phaser game
-var game = new Phaser.Game({
-  width: 400,
-  height: 300,
-  scene: {
-    preload: preload,
-    create: create,
-    update: update,
-  },
-});
+var config = {
+    type: Phaser.CANVAS,
+    width: 800,
+    height: 600,
+    parent: 'phaser-example',
+    backgroundColor: '#9adaea',
+    useTicker: true,
+    scene: {
+        preload: preload,
+        create: create,
+        update: update
+    }
+};
 
-// define some variables to keep track of the player's position and velocity
-var player;
-var cursors;
+var bullet1;
+var bullet2;
 
-// define some constants for the player's size and speed
-var PLAYER_SIZE = 20;
-var PLAYER_SPEED = 150;
-var JUMP_SPEED = 300;
+var speed1;
+var speed2;
 
-// define some platforms for the player to land on
-var platforms;
+var game = new Phaser.Game(config);
 
-// define some constants for the platform colors
-var PLATFORM_FILL_COLOR = 0x96beff;
-var PLATFORM_STROKE_COLOR = 0x323232;
-
-function preload() {
-  // nothing to preload in this example
+function preload ()
+{
+    this.load.image('bullet', 'assets/tests/timer/bullet-bill.png');
+    this.load.image('cannon', 'assets/tests/timer/cannon.png');
+    this.load.image('ground', 'assets/tests/timer/ground.png');
 }
 
-function create() {
-  // create the player
-  player = this.add.rectangle(100, 100, PLAYER_SIZE, PLAYER_SIZE, 0xff0000);
+function create ()
+{
+    //   Bullet 1 (600px in 6 seconds)
 
-  // create the platforms
-  platforms = this.add.group();
-  platforms.add(this.add.rectangle(50, 150, 200, 20, PLATFORM_FILL_COLOR, PLATFORM_STROKE_COLOR));
-  platforms.add(this.add.rectangle(100, 100, 100, 20, PLATFORM_FILL_COLOR, PLATFORM_STROKE_COLOR));
-  platforms.add(this.add.rectangle(150, 50, 50, 20, PLATFORM_FILL_COLOR, PLATFORM_STROKE_COLOR));
+    this.add.image(0, 200, 'ground').setOrigin(0);
 
-  // enable physics for the player and platforms
-  this.physics.world.enable([player, platforms]);
+    bullet1 = this.add.image(64, 76, 'bullet').setOrigin(0);
 
-  // set the player's bounciness
-  player.setBounce(0.2);
+    speed1 = Phaser.Math.GetSpeed(600, 6);
 
-  // set the player's gravity
-  player.body.gravity.y = 600;
+    this.add.image(64, 72, 'cannon').setOrigin(0);
 
-  // set the platforms to be immovable
-  platforms.getChildren().forEach(function(platform) {
-    platform.body.immovable = true;
-  });
+    this.add.text(64, 50, '600px / 6 secs', { fill: '#000' });
 
-  // enable cursor keys for player movement
-  cursors = this.input.keyboard.createCursorKeys();
+    //   Bullet 2 (600px in 3 seconds)
+
+    this.add.image(0, 500, 'ground').setOrigin(0);
+
+    bullet2 = this.add.image(64, 376, 'bullet').setOrigin(0);
+
+    speed2 = Phaser.Math.GetSpeed(600, 3);
+
+    this.add.image(64, 500, 'cannon').setOrigin(0, 1);
+
+    this.add.text(64, 350, '600px / 3 secs', { fill: '#000' });
 }
 
-function update() {
-  // make the player and platforms collide
-  this.physics.collide(player, platforms);
+//  The update function is passed 2 values:
+//  The current time (in ms)
+//  And the delta time, which is derived from the elapsed time since the last frame, with some smoothing and range clamping applied
 
-  // move the player left and right
-  if (cursors.left.isDown) {
-    player.setVelocityX(-PLAYER_SPEED);
-  } else if (cursors.right.isDown) {
-    player.setVelocityX(PLAYER_SPEED);
-  } else {
-    player.setVelocityX(0);
-  }
+function update (time, delta)
+{
+    bullet1.x += speed1 * delta;
 
-  // make the player jump
-  if (cursors.up.isDown && player.body.touching.down) {
-    player.setVelocityY(-JUMP_SPEED);
-  }
+    if (bullet1.x > 864)
+    {
+        bullet1.x = 64;
+    }
+
+    bullet2.x += speed2 * delta;
+
+    if (bullet2.x > 864)
+    {
+        bullet2.x = 64;
+    }
 }
