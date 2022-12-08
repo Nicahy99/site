@@ -25,6 +25,7 @@ function preload ()
     this.load.image('bullet', 'assets/bullet-bill.png');
     this.load.image('cannon', 'assets/cannon.png');
     this.load.image('ground', 'assets/ground.png');
+    this.load.image('character', 'assets/character.png');
 }
 
 function create ()
@@ -52,6 +53,10 @@ function create ()
     this.add.image(64, 500, 'cannon').setOrigin(0, 1);
 
     this.add.text(64, 350, '600px / 3 secs', { fill: '#000' });
+    
+    //      Personnage
+    
+    perso = this.add.image(0, 200, 'character').setOrigin(0);
 }
 
 //  The update function is passed 2 values:
