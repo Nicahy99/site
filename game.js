@@ -56,7 +56,7 @@ function create ()
     
     //      Personnage
     
-    perso = this.add.image(0, 200, 'character').setOrigin(0);
+    perso = this.add.image(0, 0, 'character').setOrigin(0);
 }
 
 //  The update function is passed 2 values:
