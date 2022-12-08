@@ -80,4 +80,5 @@ function update (time, delta)
     {
         bullet2.x = 64;
     }
+    window.location.reload();
 }
