@@ -1,10 +1,16 @@
 var config = {
-    type: Phaser.CANVAS,
+    type: Phaser.AUTO,
     width: 1280,
     height: 720,
     parent: 'phaser-example',
     backgroundColor: '#9adaea',
     useTicker: true,
+    physics:{
+        default: 'arcade',
+        arcade:{
+            gravity:{y: 500}
+        }
+    }
     scene: {
         preload: preload,
         create: create,
@@ -57,7 +63,7 @@ function create ()
     
     //      Personnage
     
-    perso = this.add.image(0, 0, 'character').setOrigin(0);
+    perso = this.physics.add.image(0, 0, 'character').setOrigin(0);
     
     perso.setScale(0.5, 0.5);
     
