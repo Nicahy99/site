@@ -3,40 +3,39 @@ const game = new Phaser.Game({
   width: 640,
   height: 480,
   scene: {
-    // Fonction de préchargement des ressources de jeu
-    preload: function() {
-      // Charger l'image
-      this.load.image("character", "./assets/character.png");
-    },
     // Définir la logique de la scène
     create: function() {
-      // Créer un personnage en utilisant un sprite
-      const character = this.add.sprite(20, 20, "character");
-      // Vérifier si l'objet "character" et l'objet "character.body" sont bien définis
-      if (character && character.body) {
-      // Accéder à la propriété "gravity" de l'objet "character.body"
+      // Dessiner le sol et le personnage avec des formes géométriques
+      this.add.rectangle(320, 440, 640, 80, 0x999999);
+      this.add.circle(100, 100, 20, 0xffffff);
+    },
+    // Fonction appelée après le chargement des ressources de la scène
+    onCreate: function() {
+      // Récupérer le personnage
+      const character = this.add.getChildren().find(child => child.type === "Circle");
       // Définir la gravité pour le personnage
-        character.body.gravity.y = 500;
-      }
+      character.body.gravity.y = 500;
     },
     // Définir la boucle de jeu principale
     update: function() {
-      // Récupérer les entrées du joueur
-      const cursors = this.input.keyboard.createCursorKeys();
+      // Récupérer les entrées du clavier
+      const cursor = this.input.keyboard.createCursorKeys();
       // Récupérer le personnage
-      const character = this.children.entries[0];
-      // Mettre à jour la vélocité du personnage en fonction des entrées du joueur
-      if (cursors.left.isDown) {
-        character.body.velocity.x = -200;
-      } else if (cursors.right.isDown) {
-        character.body.velocity.x = 200;
-      } else {
-        character.body.velocity.x = 0;
+      const character = this.add.getChildren().find(child => child.type === "Circle");
+      // Déplacer le personnage selon les entrées du clavier
+      if (cursor.left.isDown) {
+        character.x -= 5;
       }
-      // Permettre au personnage de sauter en appuyant sur la touche "espace"
-      if (cursors.space.isDown && character.body.touching.down) {
-        character.body.velocity.y = -500;
+      if (cursor.right.isDown) {
+        character.x += 5;
+      }
+      // Faire sauter le personnage
+      if (cursor.up.isDown) {
+        character.body.velocity.y = -400;
       }
     }
   }
 });
+
+
+
