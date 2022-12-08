@@ -12,8 +12,12 @@ const game = new Phaser.Game({
     create: function() {
       // Créer un personnage en utilisant un sprite
       const character = this.add.sprite(20, 20, "character");
+      // Vérifier si l'objet "character" et l'objet "character.body" sont bien définis
+      if (character && character.body) {
+      // Accéder à la propriété "gravity" de l'objet "character.body"
       // Définir la gravité pour le personnage
-      character.body.gravity.y = 500;
+        character.body.gravity.y = 500;
+      }
     },
     // Définir la boucle de jeu principale
     update: function() {
