@@ -58,7 +58,7 @@ function create ()
     
     perso = this.add.image(0, 0, 'character').setOrigin(0);
     
-    perso.setScale(2, 2);
+    perso.setScale(0.5, 0.5);
 }
 
 //  The update function is passed 2 values:
