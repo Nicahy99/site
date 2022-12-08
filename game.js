@@ -3,6 +3,11 @@ const game = new Phaser.Game({
   width: 640,
   height: 480,
   scene: {
+    // Fonction de préchargement des ressources de jeu
+    preload: function() {
+      // Charger l'image
+      this.load.image("character", "./assets/character.png");
+    },
     // Définir la logique de la scène
     create: function() {
       // Créer un personnage en utilisant un sprite
