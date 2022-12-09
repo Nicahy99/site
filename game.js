@@ -66,7 +66,7 @@ var config = {
         arcade: { // Paramètres du moteur de physique arcade
             gravity: { // Gravité à utiliser
                 x: 0, // Composante x de la gravité en pixels par seconde carrée
-                y: 100 // Composante y de la gravité en pixels par seconde carrée
+                y: 50 // Composante y de la gravité en pixels par seconde carrée
             },
         },
     },
@@ -93,21 +93,25 @@ function preload ()
         name:"tuto",
         objects: [
             {
-                name:"ground",
-                width: 800,
-                height:100,
-                x: 400,
-                y: 700,
+                name:"mur_long",
+                x: 350,
+                y: 713,
                 allowGravity: false,
                 immovable: true,
                 collisions: true
             },
             {
-                name:"ground",
-                width: 800,
-                height:100,
+                name:"mur_long",
+                x: 1046,
+                y: 713,
+                allowGravity: false,
+                immovable: true,
+                collisions: true
+            },
+            {
+                name:"mur_long",
                 x: 1200,
-                y: 700,
+                y: 600,
                 allowGravity: false,
                 immovable: true,
                 collisions: true
@@ -118,6 +122,7 @@ function preload ()
 
     this.load.image('character', 'assets/character.png');
     this.load.image('ground', 'assets/ground.png');
+    this.load.image('mur_long', 'assets/mur_long.png');
 }
 
 function create ()
@@ -183,10 +188,12 @@ function update (time, delta)
     
     if (cursors.left.isDown){
         perso.setVelocityX(-500);
+        perso.setFlipX(true);
     }
     
     if (cursors.right.isDown){
         perso.setVelocityX(500);
+        perso.setFlipX(false);
     }
 
 
