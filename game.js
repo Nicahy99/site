@@ -130,7 +130,7 @@ function create ()
     //      Personnage
     
     this.display.character.push(this.physics.add.image(200, 200, 'character'));
-    this.display.character[this.display.character.length - 1].setScale(5, 5);
+    //this.display.character[this.display.character.length - 1].setScale(5, 5);
     this.display.character[this.display.character.length - 1].body.collideWorldBounds = true;
 
     //this.physics.add.collider(perso, ground);
@@ -158,12 +158,14 @@ function create ()
     //      Input
 
     cursors = this.input.keyboard.createCursorKeys();
-
+    //console.log(Phaser.Input.Keyboard.KeyCodes);
+    cursors.ctrl = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.CTRL);
     console.log(this);
     //console.log(ground);
     //this.physics.add.collider(this.display.character[0], this.world.objects[0]);
     console.log(this.display.character[0]);
     console.log(this.world.objects[0]);
+    console.log(cursors);
 }
 
 //  The update function is passed 2 values:
@@ -178,7 +180,7 @@ function update (time, delta)
     
     perso.setVelocityX(0);
 
-    if (cursors.up.isDown && perso.body.touching.down){
+    if ((cursors.up.isDown && perso.body.touching.down) || cursors.ctrl.isDown){
         perso.setVelocityY(-1000);
     }
     
