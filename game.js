@@ -1,22 +1,53 @@
 var config = {
-    type: Phaser.AUTO,
-    width: 1280,
-    height: 720,
-    parent: 'phaser-example',
-    backgroundColor: '#9adaea',
-    useTicker: true,
-    physics:{
-        default: 'arcade',
-        arcade:{
-            gravity:{y: 500}
-        }
-    }
-    scene: {
-        preload: preload,
-        create: create,
-        update: update
-    }
-};
+    // Paramètres généraux
+    type: Phaser.AUTO, // Type de rendu à utiliser
+    width: 1280, // Largeur du jeu en pixels
+    height: 720, // Hauteur du jeu en pixels
+    parent: 'phaser-example', // Élément HTML parent dans lequel afficher le jeu
+    backgroundColor: '#9adaea', // Couleur d'arrière-plan du jeu
+    useTicker: true, // Activer le moteur de physique
+    fps: 60, // Nombre d'images par seconde souhaité
+    pixelArt: true, // Activer le rendu pixelisé
+    audio: { // Paramètres audio
+        noAudio: false, // Désactiver la prise en charge audio
+        disableWebAudio: false, // Désactiver Web Audio API
+        audioMute: false, // Démarrer le jeu avec le son désactivé
+        context: null, // Contexte audio personnalisé à utiliser
+        mute: false, // Démarrer le jeu avec le son désactivé
+        volume: 1, // Volume global du jeu (entre 0 et 1)
+        rate: 1, // Vitesse de lecture des fichiers audio (entre 0 et 2)
+        detune: 0, // Décalage en cents des fichiers audio (entre -1200 et 1200)
+        seek: 0, // Position de lecture initiale des fichiers audio en millisecondes
+        loop: false, // Activer la boucle sur les fichiers audio
+        delay: 0, // Délai avant la lecture des fichiers audio en millisecondes
+        webaudio: { // Paramètres Web Audio API
+            context: null, // Contexte audio personnalisé à utiliser
+            ...
+        },
+        ...
+    },
+    physics: { // Paramètres du moteur de physique
+        default: 'arcade', // Type de moteur de physique à utiliser
+        arcade: { // Paramètres du moteur de physique arcade
+            gravity: { // Gravité à utiliser
+                x: 0, // Composante x de la gravité en pixels par seconde carrée
+                y: 0 // Composante y de la gravité en pixels par seconde carrée
+            },
+            checkCollision: { // Paramètres de collision
+                up: true, // Activer les collisions en haut
+                down: true, // Activer les collisions en bas
+                left: true, // Activer les collisions à gauche
+                right: true, // Activer les collisions à droite
+            },
+            maxObjects: 10, // Nombre maximal d'objets en mémoire pour chaque type de collision
+            maxLevels: 4, // Niveau maximal de la hiérarchie de collision
+            overlapBias: 4, // Biais de recouvrement pour la détection de collision
+            ...
+        },
+        ...
+    },
+}
+
 
 var bullet1;
 var bullet2;
