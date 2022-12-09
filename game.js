@@ -31,7 +31,7 @@ var config = {
         arcade: { // Paramètres du moteur de physique arcade
             gravity: { // Gravité à utiliser
                 x: 0, // Composante x de la gravité en pixels par seconde carrée
-                y: 0 // Composante y de la gravité en pixels par seconde carrée
+                y: 300 // Composante y de la gravité en pixels par seconde carrée
             },
             checkCollision: { // Paramètres de collision
                 up: true, // Activer les collisions en haut
@@ -63,7 +63,6 @@ function preload ()
     this.load.image('cannon', 'assets/cannon.png');
     this.load.image('ground', 'assets/ground.png');
     this.load.image('character', 'assets/character.png');
-    this.physics.world.gravity.y = 300;
 }
 
 function create ()
