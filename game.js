@@ -66,33 +66,99 @@ var config = {
         arcade: { // Paramètres du moteur de physique arcade
             gravity: { // Gravité à utiliser
                 x: 0, // Composante x de la gravité en pixels par seconde carrée
-                y: 200 // Composante y de la gravité en pixels par seconde carrée
+                y: 100 // Composante y de la gravité en pixels par seconde carrée
             },
         },
     },
 };
 
+let sol;
 
 let perso;
 let cursors;
+
+var map = {
+    name: "tuto",
+    background: "",
+};
 var game = new Phaser.Game(config);
 
 function preload ()
 {
+    this.display = {
+        objects: [],
+        character:[]
+    };
+    this.world = {
+        name:"tuto",
+        objects: [
+            {
+                name:"ground",
+                width: 800,
+                height:100,
+                x: 400,
+                y: 700,
+                allowGravity: false,
+                immovable: true,
+                collisions: true
+            },
+            {
+                name:"ground",
+                width: 800,
+                height:100,
+                x: 1200,
+                y: 700,
+                allowGravity: false,
+                immovable: true,
+                collisions: true
+            },
+        ],
+        character: [{}]
+    };
+
     this.load.image('character', 'assets/character.png');
+    this.load.image('ground', 'assets/ground.png');
 }
 
 function create ()
 {   
+    //      Personnage
+    
+    this.display.character.push(this.physics.add.image(200, 200, 'character'));
+    this.display.character[this.display.character.length - 1].setScale(5, 5);
+    this.display.character[this.display.character.length - 1].body.collideWorldBounds = true;
+
+    //this.physics.add.collider(perso, ground);
+
+
+    //      Envirenoment
+    for (let i = 0; i < this.world.character.length; i++) {
+
+    }
+    for (let i = 0; i < this.world.objects.length; i++) {
+        this.display.objects.push (this.physics.add.image(this.world.objects[i].x, this.world.objects[i].y, this.world.objects[i].name));
+        if ("collisions" in this.world.objects[i] && this.world.objects[i].collisions)
+            for(let j = 0; j < this.display.character.length; j++){
+                this.physics.add.collider(this.display.character[j], this.display.objects[i]);
+            }
+        if ("allowGravity" in this.world.objects[i])
+            this.display.objects[this.display.objects.length - 1].body.allowGravity = this.world.objects[i].allowGravity;
+        if ("immovable" in this.world.objects[i])
+            this.display.objects[this.display.objects.length - 1].body.immovable = this.world.objects[i].immovable;
+    }
+
+    //ground.body.setFriction(1, 1);
+    //ground.body.setBounce(2, 2);
+
     //      Input
 
     cursors = this.input.keyboard.createCursorKeys();
 
-    //      Personnage
-    
-    perso = this.physics.add.image(200, 200, 'character');
-    perso.setScale(0.2, 0.2);
-    perso.body.collideWorldBounds = true;
+    console.log(this);
+    //console.log(ground);
+    //this.physics.add.collider(this.display.character[0], this.world.objects[0]);
+    console.log(this.display.character[0]);
+    console.log(this.world.objects[0]);
 }
 
 //  The update function is passed 2 values:
@@ -101,11 +167,14 @@ function create ()
 
 function update (time, delta)
 {   
+    //        Gravite et Deplacement
+    perso = this.display.character[0];
     perso.body.velocity.y += this.physics.world.gravity.y;
+    
     perso.setVelocityX(0);
 
-    if (cursors.up.isDown){
-        perso.setVelocityY(-500);
+    if (cursors.up.isDown && perso.body.touching.down){
+        perso.setVelocityY(-1000);
     }
     
     if (cursors.down.isDown){
@@ -119,4 +188,6 @@ function update (time, delta)
     if (cursors.right.isDown){
         perso.setVelocityX(500);
     }
+
+
 }
