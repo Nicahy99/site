@@ -178,7 +178,8 @@ function update (time, delta)
     perso = this.display.character[0];
     perso.body.velocity.y += this.physics.world.gravity.y;
     
-    perso.setVelocityX(0);
+    if (perso.body.touching.down)
+        perso.setVelocityX(0);
 
     if ((cursors.up.isDown && perso.body.touching.down) || cursors.ctrl.isDown){
         perso.setVelocityY(-1000);
@@ -188,12 +189,12 @@ function update (time, delta)
         perso.setVelocityY(500);
     }
     
-    if (cursors.left.isDown){
+    if (cursors.left.isDown && perso.body.touching.down){
         perso.setVelocityX(-500);
         perso.setFlipX(true);
     }
     
-    if (cursors.right.isDown){
+    if (cursors.right.isDown && perso.body.touching.down){
         perso.setVelocityX(500);
         perso.setFlipX(false);
     }
