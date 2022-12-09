@@ -42,9 +42,7 @@ var config = {
             maxObjects: 10, // Nombre maximal d'objets en mémoire pour chaque type de collision
             maxLevels: 4, // Niveau maximal de la hiérarchie de collision
             overlapBias: 4, // Biais de recouvrement pour la détection de collision
-            ...
         },
-        ...
     },
 }
 
