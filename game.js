@@ -1,3 +1,36 @@
+/*
+
+// Charger le module socket.io
+const socket = require('socket.io');
+
+// Écouter les connexions entrantes sur le serveur
+const io = socket(server);
+
+// Quand un client se connecte, imprimer un message dans la console
+io.on('connection', (socket) => {
+  console.log('Un nouveau client est connecté !');
+});
+
+// Créer une fonction pour envoyer les messages des utilisateurs à tous les autres clients connectés
+function broadcast(sender, message) {
+  socket.broadcast.emit('chat message', { sender, message });
+}
+
+// Quand un client envoie un message, appeler la fonction broadcast
+io.on('connection', (socket) => {
+  socket.on('chat message', (message) => {
+    broadcast(socket.id, message);
+  });
+});
+
+function sendPlayerInfo(player) {
+  socket.emit('player info', player);
+}
+
+*/
+
+
+
 /*var config = {
     // Paramètres généraux
     type: Phaser.AUTO, // Type de rendu à utiliser
@@ -66,7 +99,7 @@ var config = {
         arcade: { // Paramètres du moteur de physique arcade
             gravity: { // Gravité à utiliser
                 x: 0, // Composante x de la gravité en pixels par seconde carrée
-                y: 50 // Composante y de la gravité en pixels par seconde carrée
+                y:  50 // Composante y de la gravité en pixels par seconde carrée
             },
         },
     },
@@ -85,6 +118,16 @@ var game = new Phaser.Game(config);
 
 function preload ()
 {
+
+    player = {
+        name:"character",
+        x: 200,
+        y: 200,
+        collideWorldBounds: true,
+        type: "joueur",
+        id: 0,
+    };
+
     this.display = {
         objects: [],
         character:[]
@@ -93,7 +136,19 @@ function preload ()
         name:"tuto",
         objects: [
             {
-                name:"mur_long",
+                name: "backgrounddonjon",
+                x: 0,
+                y: 0,
+                allowGravity: false,
+                immovable: true,
+                collisions: false,
+                originX: 0,
+                originY: 0,
+                size: 2.3,
+                depth: 0,
+            },
+            {
+                name:"mur_long_horizontal",
                 x: 350,
                 y: 713,
                 allowGravity: false,
@@ -101,7 +156,7 @@ function preload ()
                 collisions: true
             },
             {
-                name:"mur_long",
+                name:"mur_long_horizontal",
                 x: 1046,
                 y: 713,
                 allowGravity: false,
@@ -109,37 +164,81 @@ function preload ()
                 collisions: true
             },
             {
-                name:"mur_long",
+                name:"mur_long_vertical",
+                x: 10,
+                y: 5,
+                originX: 0,
+                originY: 0,
+                allowGravity: false,
+                immovable: true,
+                collisions: true,
+            },
+            {
+                name:"mur_long_vertical",
+                x: 1260,
+                y: 5,
+                originX: 0,
+                originY: 0,
+                allowGravity: false,
+                immovable: true,
+                collisions: true,
+            },
+            {
+                name:"mur_long_horizontal",
                 x: 1200,
                 y: 600,
                 allowGravity: false,
                 immovable: true,
                 collisions: true
             },
+            {
+                name:"mur_long_horizontal",
+                x: 800,
+                y: 400,
+                allowGravity: false,
+                immovable: true,
+                collisions: true
+            },
         ],
-        character: [{}]
+        character: [
+            player,
+            {
+            name:"zombie",
+            x: 1000,
+            y: 500,
+            collisions: true,
+            type: "pnj",
+            ia: "simple",
+            gauche: 1,
+        }]
     };
 
     this.load.image('character', 'assets/character.png');
-    this.load.image('ground', 'assets/ground.png');
-    this.load.image('mur_long', 'assets/mur_long.png');
+    this.load.image('zombie', 'assets/character.png');
+    this.load.image('backgrounddonjon', 'assets/backgrounddonjon.png');
+    this.load.image('mur_long_horizontal', 'assets/mur_long_horizontal.png');
+    this.load.image('mur_long_vertical', 'assets/mur_long_vertical.png');
 }
 
 function create ()
 {   
     //      Personnage
-    
-    this.display.character.push(this.physics.add.image(200, 200, 'character'));
+    //this.display.character.push(this.physics.add.image(character.x, character.y, character.name));
     //this.display.character[this.display.character.length - 1].setScale(5, 5);
-    this.display.character[this.display.character.length - 1].body.collideWorldBounds = true;
+    //this.display.character[this.display.character.length - 1].body.collideWorldBounds = true;
 
     //this.physics.add.collider(perso, ground);
 
 
     //      Envirenoment
     for (let i = 0; i < this.world.character.length; i++) {
-
+        this.display.character.push (this.physics.add.image(this.world.character[i].x, this.world.character[i].y, this.world.character[i].name));
+        this.display.character[this.display.character.length - 1].depth = 100;
+        if ("collideWorldBounds" in this.world.character[i]){
+            this.display.character[this.display.character.length - 1].body.collideWorldBounds = this.world.character[i].collideWorldBounds;
+        }
     }
+
     for (let i = 0; i < this.world.objects.length; i++) {
         this.display.objects.push (this.physics.add.image(this.world.objects[i].x, this.world.objects[i].y, this.world.objects[i].name));
         if ("collisions" in this.world.objects[i] && this.world.objects[i].collisions)
@@ -148,10 +247,23 @@ function create ()
             }
         if ("allowGravity" in this.world.objects[i])
             this.display.objects[this.display.objects.length - 1].body.allowGravity = this.world.objects[i].allowGravity;
-        if ("immovable" in this.world.objects[i])
+        if ("originX" in this.world.objects[i] && "originY" in this.world.objects[i]){
+            this.display.objects[this.display.objects.length - 1].setOrigin(this.world.objects[i].originX, this.world.objects[i].originY);
+            //this.display.objects[this.display.objects.length - 1]._displayOriginX = this.world.objects[i].originX
+            //this.display.objects[this.display.objects.length - 1]._displayOriginY =this.world.objects[i].originY;
+        }
+        if ("size" in this.world.objects[i])
+            this.display.objects[this.display.objects.length - 1].setScale(this.world.objects[i].size);
+        if ("depth" in this.world.objects[i])
+            this.display.objects[this.display.objects.length - 1].depth = this.world.objects[i].depth;
+        if ("angle" in this.world.objects[i]){
+            this.display.objects[this.display.objects.length - 1].setAngle(this.world.objects[i].angle);
+            //this.display.objects[this.display.objects.length - 1].w = 90;
+        }
+        if ("immovable" in this.world.objects[i]){
             this.display.objects[this.display.objects.length - 1].body.immovable = this.world.objects[i].immovable;
+        }
     }
-
     //ground.body.setFriction(1, 1);
     //ground.body.setBounce(2, 2);
 
@@ -163,9 +275,9 @@ function create ()
     console.log(this);
     //console.log(ground);
     //this.physics.add.collider(this.display.character[0], this.world.objects[0]);
-    console.log(this.display.character[0]);
-    console.log(this.world.objects[0]);
-    console.log(cursors);
+    //console.log(this.display.character[0]);
+    //console.log(this.world.objects[0]);
+    //console.log(cursors);
 }
 
 //  The update function is passed 2 values:
@@ -174,12 +286,61 @@ function create ()
 
 function update (time, delta)
 {   
+
     //        Gravite et Deplacement
+
+    for (let i = 0; i < this.world.character.length; i++) {
+            if(true){
+                this.display.character[i].body.velocity.y += this.physics.world.gravity.y;
+            }
+                if (("type" in this.world.character[i] && this.world.character[i].type == "pnj" && "ia" in this.world.character[i] && this.world.character[i].ia == "simple")){
+                    if (this.world.character[i].gauche == 1){
+                        this.display.character[i].setVelocityX(-50);
+                        this.display.character[i].setFlipX(true);
+                    }
+                    else{
+                        this.display.character[i].setVelocityX(50);
+                        this.display.character[i].setFlipX(false);
+                    }
+                    if (this.display.character[i].body.blocked.left){
+                        this.world.character[i].gauche = 0;
+                    }
+                    else if (this.display.character[i].body.blocked.right){
+                        this.world.character[i].gauche = 1;
+                    }
+                }
+                /*if ("type" in this.world.character[i] && this.world.character[i].type == "joueur"){
+                    for (let j = 0; j < 20; j++){
+                        if (lst_player[j].id > this.world.character[i].id){
+                            j = 20;
+                        }
+                        if (lst_player[j].id == this.world.character[i].id){
+                            this.display.character[i].x = lst_player[j].x
+                            this.display.character[i].y = lst_player[j].y
+                            this.display.character[i].setFlipX(lst_player[j].FlipX)
+                        }
+                    }
+                }*/
+    }
     perso = this.display.character[0];
-    perso.body.velocity.y += this.physics.world.gravity.y;
     
     if (perso.body.touching.down)
         perso.setVelocityX(0);
+    /*if (cursors.up.isDown && ((cursors.left.isDown && perso.body.touching.left) || (cursors.right.isDown && perso.body.touching.right))){
+        perso.setVelocityY(-750);
+        perso.setVelocityX(-1750);
+    }*/
+    if (cursors.up.isDown && perso.body.touching.right) {
+        perso.setVelocityY(-1200);
+        perso.setVelocityX(-400);
+        perso.setFlipX(true);
+    }
+
+    if (cursors.up.isDown && perso.body.touching.left) {
+        perso.setVelocityY(-1200);
+        perso.setVelocityX(400);
+        perso.setFlipX(false);
+    }
 
     if ((cursors.up.isDown && perso.body.touching.down) || cursors.ctrl.isDown){
         perso.setVelocityY(-1000);
@@ -199,5 +360,7 @@ function update (time, delta)
         perso.setFlipX(false);
     }
 
+    //      Envoie des information du joueur
 
+    //send_player_info(this.display.character[0]);
 }
